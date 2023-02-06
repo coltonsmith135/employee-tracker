@@ -14,6 +14,18 @@ const db = mysql.createConnection(
 console.log('connected to the database')
 )
 
+const mainCommand = () => {
+    inquirer.prompt([
+        {
+            type:'list',
+            message:'What would you like to do?',
+            name:'start',
+
+            choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
+        }
+    ])
+}
+
 const departmentInfo = () => {
          inquirer.prompt([
             {
@@ -42,14 +54,18 @@ const createEmployee = () => {
             message:'What is the employees role?',
             name:'role',
 
-            choices: [salesLead, salesPerson, leadEngineer, softwareEngineer, accountManager, accountant, legalTeamLead, lawyer, customerService]
+            choices: ['Sales Lead', 'Sales Person', 'Lead Engineer', 'Software Engineer', 'Account Manager', 'Accountant', 'Legal Team Lead', 'Lawyer', 'Customer Service']
         },
         {
             type:'list',
             message:'Who is the employees manager?',
             name:'manager',
 
-            choices: [colton-smith, nathan-henderson, natasha-amber, mikey-swagg, scot-smith]
+            choices: ['Colton Smith', 'Nathan Henderson', 'Natasha Amber', 'Mikey Swagg', 'Scot Smith']
         }
     ])
+}
+
+const updateEmployee = () => {
+   
 }
