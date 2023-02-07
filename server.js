@@ -1,15 +1,12 @@
 const inquirer = require('inquirer')
-const express = require('express')
 const mysql = require('mysql2')
-
-const app = express()
 
 const db = mysql.createConnection(
     {
         host: 'localhost',
         user: 'root',
         password: 'Star2324!',
-        database:''
+        database:'company_db'
 },
 console.log('connected to the database')
 )
