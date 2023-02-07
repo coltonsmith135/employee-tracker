@@ -63,6 +63,12 @@ const createEmployee = () => {
     ])
 }
 
-const updateEmployee = () => {
-   
+const updateEmployeeRole = () => {
+     inquirer.prompt([
+        {
+            type:'',
+            message:'Which employee role would you like to update',
+            name:''
+        }
+     ])
 }
