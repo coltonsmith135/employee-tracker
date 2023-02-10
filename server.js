@@ -20,42 +20,44 @@ const mainCommand = () => {
 
             choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
         }
-    ]) 
+    ]).then(answers => {
+        switch(answers.start) {
+
+            case 'View All Employees':
+                viewEmployees();
+                break;
     
-    switch(answers) {
-
-        case 'View All Employees':
-            viewEmployees();
-            break;
-
-        case 'Add Employee':
-            createEmployee();
-            break;
-
-        case 'Update Employee Role':
-            updateEmployeeRole();
-            break;
-
-        case 'View All Roles':
-            viewRoles();
-            break;
-
-        case 'Add Role':
-            createRole();
-            break;
-
-        case 'View All Departments':
-            updateEmployeeRole();
-            break;
-
-        case 'Add Department':
-            createDepartment();
-            break;
-    }
+            case 'Add Employee':
+                createEmployee();
+                break;
+    
+            case 'Update Employee Role':
+                updateEmployeeRole();
+                break;
+    
+            case 'View All Roles':
+                viewRoles();
+                break;
+    
+            case 'Add Role':
+                createRole();
+                break;
+    
+            case 'View All Departments':
+                viewDepartments();
+                break;
+    
+            case 'Add Department':
+                createDepartment();
+                break;
+        }
+    })
+    
+    
     
 }
 
-const createDepartment = () => {
+function createDepartment() {
     inquirer.prompt([
         {
             type: 'input',
@@ -66,7 +68,7 @@ const createDepartment = () => {
     ])
 }
 
-const createEmployee = () => {
+ function createEmployee() {
     inquirer.prompt([
         {
             type: 'input',
@@ -95,7 +97,7 @@ const createEmployee = () => {
     ])
 }
 
-const createRole = () => {
+function createRole() {
     inquirer.prompt([
         {
             type:'input',
@@ -115,10 +117,17 @@ const createRole = () => {
             choices: ['Engineering', 'Finance', 'Legal', 'Sales']
         },
         
-    ])
+    ]).then(answers => {
+        const role = {
+            title: answers.newRole,
+            salary: answers.salary,
+            department_id: answers.owner
+        }
+        console.log(role)
+    })
 }
 
-const updateEmployeeRole = () => {
+function updateEmployeeRole() {
     inquirer.prompt([
         {
             type: 'input',
@@ -128,31 +137,34 @@ const updateEmployeeRole = () => {
     ])
 }
 
-const viewEmployees = () => {
+function viewEmployees() {
     db.promise().query('SELECT * FROM employee')
         .then(([rows]) => {
-            console.log(rows);
+            console.table(rows);
         })
         .catch(console.log)
         .then(() => db.end());
 }
 
-const viewRoles = () => {
+function viewRoles() {
     db.promise().query('SELECT * FROM role')
         .then(([rows]) => {
-            console.log(rows);
+            console.table(rows);
         })
         .catch(console.log)
         .then(() => db.end());
 }
 
-const viewDepartments = () => {
-    db.promise().query('SELECT * FROM department')
-        .then(([rows]) => {
-            console.log(rows);
-        })
-        .catch(console.log)
-        .then(() => db.end());
+function viewDepartments() {
+    db.query('SELECT * FROM department', (err, result) => {
+        if(err) {
+            console.log(err)
+        } else {
+            console.table(result)
+            mainCommand();
+        }
+    })
+        
 }
 
 mainCommand();
