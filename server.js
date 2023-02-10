@@ -21,40 +21,44 @@ const mainCommand = () => {
             choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
         }
     ]).then(answers => {
-        switch(answers.start) {
+        switch (answers.start) {
 
             case 'View All Employees':
                 viewEmployees();
                 break;
-    
+
             case 'Add Employee':
                 createEmployee();
                 break;
-    
+
             case 'Update Employee Role':
                 updateEmployeeRole();
                 break;
-    
+
             case 'View All Roles':
                 viewRoles();
                 break;
-    
+
             case 'Add Role':
                 createRole();
                 break;
-    
+
             case 'View All Departments':
                 viewDepartments();
                 break;
-    
+
             case 'Add Department':
                 createDepartment();
                 break;
+             
+            case 'Quit':
+                  
+            break;
         }
     })
-    
-    
-    
+
+
+
 }
 
 function createDepartment() {
@@ -66,9 +70,10 @@ function createDepartment() {
         },
 
     ])
+    
 }
 
- function createEmployee() {
+function createEmployee() {
     inquirer.prompt([
         {
             type: 'input',
@@ -95,39 +100,46 @@ function createDepartment() {
             choices: ['Colton Smith', 'Nathan Henderson', 'Natasha Amber', 'Mikey Swagg', 'Scot Smith']
         }
     ])
+  
 }
 
 function createRole() {
-    inquirer.prompt([
-        {
-            type:'input',
-            message:'What is the name of the role?',
-            name:'newRole'
-        },
-        {
-            type:'input',
-            message:'What is the salary of the role?',
-            name:'salary'
-        },
-        {
-            type:'list',
-            message:'Which department does the role belong to?',
-            name:'owner',
+    db.promise().query('SELECT department.department_name, department.id FROM department')
+        .then(([res]) => {
+            
+            inquirer.prompt([
+                {
+                    type: 'input',
+                    message: 'What is the name of the role?',
+                    name: 'newRole'
+                },
+                {
+                    type: 'input',
+                    message: 'What is the salary of the role?',
+                    name: 'salary'
+                },
+                {
+                    type: 'list',
+                    message: 'Which department does the role belong to?',
+                    name: 'owner',
 
-            choices: ['Engineering', 'Finance', 'Legal', 'Sales']
-        },
-        
-    ]).then(answers => {
-        const role = {
-            title: answers.newRole,
-            salary: answers.salary,
-            department_id: answers.owner
-        }
-        console.log(role)
-    })
+                    choices: [{name: 'Sales', value: '1'}, {name: 'Engineering', value: '2'}, {name: 'Finance', value: 3}, {name: 'Legal', value: 4}]
+                },
+
+            ]).then(answers => {
+                const role = {
+                    title: answers.newRole,
+                    salary: answers.salary,
+                    department_id: answers.owner
+                }
+                console.log(answers)
+                mainCommand();
+            })
+        })
 }
 
 function updateEmployeeRole() {
+    const sql = `UPDATE role SET role = ? WHERE id = ?`;
     inquirer.prompt([
         {
             type: 'input',
@@ -135,28 +147,12 @@ function updateEmployeeRole() {
             name: 'employeeRole'
         }
     ])
+        
+    
 }
 
 function viewEmployees() {
-    db.promise().query('SELECT * FROM employee')
-        .then(([rows]) => {
-            console.table(rows);
-        })
-        .catch(console.log)
-        .then(() => db.end());
-}
-
-function viewRoles() {
-    db.promise().query('SELECT * FROM role')
-        .then(([rows]) => {
-            console.table(rows);
-        })
-        .catch(console.log)
-        .then(() => db.end());
-}
-
-function viewDepartments() {
-    db.query('SELECT * FROM department', (err, result) => {
+    db.query('SELECT * FROM employee', (err, result) => {
         if(err) {
             console.log(err)
         } else {
@@ -164,7 +160,33 @@ function viewDepartments() {
             mainCommand();
         }
     })
-        
+      
 }
+
+function viewRoles() {
+    db.query('SELECT * FROM role', (err, result) => {
+        if(err) {
+            console.log(err)
+        } else {
+            console.table(result)
+            mainCommand();
+        }
+    })
+}
+
+function viewDepartments() {
+    db.query('SELECT * FROM department', (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            console.table(result)
+            mainCommand();
+        }
+    })
+
+}
+
+
+
 
 mainCommand();
